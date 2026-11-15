@@ -83,6 +83,24 @@ class ArchivaTests(TestCase):
         r = self.client.get(reverse("busqueda"), {"q": "secreto", "asistente": "1"})
         self.assertNotContains(r, "Reservado obras")
 
+    def test_visualizar_documento_en_navegador(self):
+        self.client.login(username="ffin", password="x-Clave-segura-1")
+        for nombre, tipo in [("a.txt", "text/plain"), ("b.pdf", "application/pdf"), ("c.png", "image/png")]:
+            self.client.post(reverse("documento_nuevo"), {"titulo": nombre, "tipo": "OTRO", "dependencia": self.fin.pk,
+                             "nivel_acceso": "DEPENDENCIA", "archivo": SimpleUploadedFile(nombre, b"%PDF-1.4 x")})
+            d = Documento.objects.get(titulo=nombre)
+            r = self.client.get(reverse("documento_ver", args=[d.pk]))
+            self.assertEqual(r.status_code, 200)
+            self.assertTrue(r["Content-Type"].startswith(tipo))
+            self.assertTrue(r["Content-Disposition"].startswith("inline"))
+            self.assertEqual(r["X-Frame-Options"], "SAMEORIGIN")
+            self.assertContains(self.client.get(reverse("documento_detalle", args=[d.pk])), "Vista del documento")
+        # sin sesión no se puede ver; documento reservado de otra dependencia tampoco
+        reservado = self._doc("Reservado", "RESERVADO", self.obr, "x")
+        self.assertEqual(self.client.get(reverse("documento_ver", args=[reservado.pk])).status_code, 404)
+        self.client.logout()
+        self.assertEqual(self.client.get(reverse("documento_ver", args=[d.pk])).status_code, 302)
+
     def test_auditor_es_solo_lectura(self):
         self.client.login(username="aud", password="x-Clave-segura-1")
         r = self.client.post(reverse("expediente_nuevo"), {"asunto": "x", "dependencia": self.fin.pk,

@@ -13,6 +13,7 @@ from django.db.models import Count, Q
 from django.http import FileResponse, Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
+from django.views.decorators.clickjacking import xframe_options_sameorigin
 from django.views.decorators.http import require_POST
 
 from . import forms as F
@@ -157,7 +158,7 @@ def documento_detalle(request, pk):
     Auditoria.registrar(request, "DOC_VER", doc.codigo)
     return render(request, "core/documento_detalle.html", {
         "doc": doc, "integro": doc.verificar_integridad(), "puede_editar": puede_escribir(request.user),
-        "form_version": F.NuevaVersionForm()})
+        "form_version": F.NuevaVersionForm(), "tipo_vista": tipo_de_vista(doc.archivo.name if doc.archivo else "")})
 
 
 @login_required
@@ -173,6 +174,39 @@ def documento_descargar(request, pk, version=None):
     Auditoria.registrar(request, "DOC_DESCARGAR", doc.codigo, f"v{version or doc.version}")
     ext = archivo.name.rsplit(".", 1)[-1]
     return FileResponse(archivo.open("rb"), as_attachment=True, filename=f"{nombre}.{ext}")
+
+
+# Vista previa en el navegador: solo tipos que el navegador muestra sin ejecutar código.
+TIPOS_VISTA = {"pdf": ("application/pdf", "pdf"), "png": ("image/png", "imagen"), "jpg": ("image/jpeg", "imagen"),
+               "jpeg": ("image/jpeg", "imagen"), "txt": ("text/plain; charset=utf-8", "texto")}
+
+
+def tipo_de_vista(nombre):
+    """'pdf', 'imagen', 'texto' o None si el navegador no puede mostrarlo (p. ej. TIFF)."""
+    ext = nombre.rsplit(".", 1)[-1].lower() if "." in nombre else ""
+    return TIPOS_VISTA.get(ext, (None, None))[1]
+
+
+@login_required
+@xframe_options_sameorigin
+def documento_ver(request, pk, version=None):
+    """Muestra el archivo en el navegador (sin descargarlo). Mismos permisos que la descarga."""
+    doc = get_object_or_404(documentos_visibles(request.user), pk=pk)
+    if version:
+        v = get_object_or_404(doc.versiones, numero=version)
+        archivo, nombre = v.archivo, f"{doc.codigo}-v{v.numero}"
+    else:
+        archivo, nombre = doc.archivo, doc.codigo
+    if not archivo:
+        raise Http404
+    ext = archivo.name.rsplit(".", 1)[-1].lower()
+    if ext not in TIPOS_VISTA:
+        raise Http404  # formatos sin vista previa (TIFF): usar Descargar
+    Auditoria.registrar(request, "DOC_VISUALIZAR", doc.codigo, f"v{version or doc.version}")
+    resp = FileResponse(archivo.open("rb"), as_attachment=False, filename=f"{nombre}.{ext}",
+                        content_type=TIPOS_VISTA[ext][0])
+    resp["X-Content-Type-Options"] = "nosniff"
+    return resp
 
 
 @require_POST
