@@ -1,0 +1,12 @@
+{% extends "core/base.html" %}{% block content %}
+<div class="fila"><h1>{{ e.codigo }}</h1><img src="{% url 'expediente_qr' e.pk %}" width="90" alt="QR"></div>
+<section class="tarjeta"><h2>{{ e.asunto }}</h2>
+<p>Dependencia: {{ e.dependencia }} · Serie: {{ e.serie|default:"—" }} · {{ e.get_estado_display }} · {{ e.get_fase_display }}</p>
+<p>Ubicación física: <b>{{ e.carpeta|default:"sin asignar" }}</b></p>
+{% if e.fecha_cierre %}<p>Cierre: {{ e.fecha_cierre }} · Fin archivo de gestión: {{ e.vence_gestion }} · Fin archivo central: {{ e.vence_central }}</p>{% endif %}
+{% if archivista %}<div class="fila">
+{% if e.estado == "ABIERTO" %}<form method="post" action="{% url 'expediente_cerrar' e.pk %}">{% csrf_token %}<button class="btn sec">Cerrar expediente</button></form>{% endif %}
+{% if e.transferencia_pendiente %}<form method="post" action="{% url 'expediente_transferir' e.pk %}">{% csrf_token %}<button class="btn">Transferir a {{ e.transferencia_pendiente }}</button></form>{% endif %}</div>{% endif %}</section>
+<section class="tarjeta"><h2>Documentos</h2><ul>{% for d in docs %}<li><a href="{{ d.get_absolute_url }}">{{ d.codigo }}</a> {{ d.titulo }}</li>{% empty %}<li>Sin documentos visibles.</li>{% endfor %}</ul>
+{% if ocultos %}<small>{{ ocultos }} documento(s) restringido(s) por su nivel de acceso.</small>{% endif %}</section>
+<section class="tarjeta"><h2>Transferencias</h2><ul>{% for t in e.transferencias.all %}<li>{{ t.fecha|date:"d/m/Y" }}: {{ t.desde }} → {{ t.hacia }}</li>{% empty %}<li>Ninguna.</li>{% endfor %}</ul></section>{% endblock %}

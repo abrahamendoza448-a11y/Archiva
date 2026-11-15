@@ -1,0 +1,25 @@
+# Instalación institucional: PostgreSQL + aplicación. Los datos quedan en volúmenes del servidor del municipio (en Bolivia).
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: archiva
+      POSTGRES_USER: archiva
+      POSTGRES_PASSWORD: ${ARCHIVA_DB_PASSWORD:?defina ARCHIVA_DB_PASSWORD en .env}
+    volumes: [pgdata:/var/lib/postgresql/data]
+    restart: unless-stopped
+  web:
+    build: .
+    depends_on: [db]
+    env_file: .env
+    environment:
+      ARCHIVA_DEBUG: "0"
+      ARCHIVA_DB_NAME: archiva
+      ARCHIVA_DB_USER: archiva
+      ARCHIVA_DB_HOST: db
+    volumes:
+      - documentos:/app/data/documentos
+      - respaldos:/app/data/respaldos
+    ports: ["8000:8000"]   # publicar detrás de un proxy inverso con HTTPS (nginx/caddy)
+    restart: unless-stopped
+volumes: {pgdata: {}, documentos: {}, respaldos: {}}

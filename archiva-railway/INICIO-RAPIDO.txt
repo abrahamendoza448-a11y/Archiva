@@ -1,0 +1,32 @@
+ARCHIVA — INICIO RÁPIDO (sin conocimientos técnicos)
+
+NECESITA (una sola vez)
+ 1. Python 3.10 o superior: https://www.python.org/downloads/
+    En Windows, al instalar marque la casilla "Add Python to PATH".
+ 2. Claude Code (opcional pero recomendado): https://claude.com/claude-code
+
+OPCIÓN A — Con Claude Code (la más fácil)
+ 1. Descomprima el ZIP en una carpeta, por ejemplo Documentos\archiva.
+ 2. Abra esa carpeta con Claude Code.
+ 3. Escríbale: "Ejecuta ARCHIVA"
+    Claude Code leerá las instrucciones del proyecto (archivo CLAUDE.md), lo pondrá en marcha y le dirá qué abrir.
+
+OPCIÓN B — Sin Claude Code
+ • Windows: haga doble clic en  iniciar.bat
+ • Mac/Linux: en la terminal, ./iniciar.sh
+
+EN AMBOS CASOS
+ 1. Espere el mensaje "ARCHIVA listo".
+ 2. Abra el navegador en:  http://127.0.0.1:8000
+ 3. Ingrese con:  archivista  /  Archiva-2026!
+    (otros usuarios: admin, funcionario, auditor — misma clave)
+ 4. Para apagarlo: presione Ctrl + C en la ventana negra.
+
+PROBAR DESDE EL CELULAR
+ • Conecte el celular a la misma red Wi-Fi que la computadora.
+ • Inicie con:  iniciar.bat red   (o ./iniciar.sh --red)
+ • En el celular abra la dirección que aparece en pantalla (ej. http://192.168.0.15:8000).
+ • En Windows, si pregunta por el Firewall, permita el acceso en redes privadas.
+
+IMPORTANTE
+ • Es una demostración con datos de ejemplo. Cambie las claves antes de usarlo con información real.

@@ -1,0 +1,5 @@
+{% extends "core/base.html" %}{% block content %}
+<div class="fila"><h1>Reportes</h1><span><a class="btn" href="{% url 'reporte_inventario' %}">Exportar inventario (CSV)</a> <a class="btn sec" href="{% url 'integridad' %}">Verificar integridad</a></span></div>
+<div class="dos"><section class="tarjeta"><h2>Documentos por dependencia</h2><table>{% for r in por_dependencia %}<tr><td>{{ r.dependencia__sigla }}</td><td>{{ r.n }}</td></tr>{% endfor %}</table></section>
+<section class="tarjeta"><h2>Expedientes por fase</h2><table>{% for r in por_fase %}<tr><td>{{ r.fase }}</td><td>{{ r.n }}</td></tr>{% endfor %}</table>
+<h2>Trámites</h2><table>{% for r in por_estado_tramite %}<tr><td>{{ r.estado }}</td><td>{{ r.n }}</td></tr>{% endfor %}</table></section></div>{% endblock %}

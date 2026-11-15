@@ -1,0 +1,51 @@
+{% extends "core/base.html" %}{% block title %}Panel · ARCHIVA{% endblock %}{% block content %}
+<div class="fila encabezado">
+  <div><h1>Bienvenido a ARCHIVA</h1><p class="mut solo-escritorio">Gestión documental inteligente para una administración institucional organizada, segura y eficiente.</p></div>
+  <div class="acciones"><a class="btn sec" href="{% url 'correspondencia_nueva' %}">Registrar correspondencia</a><a class="btn" href="{% url 'documento_nuevo' %}">+ Nuevo documento</a></div>
+</div>
+
+<section class="cifras" aria-label="Indicadores">
+  <a class="cifra" href="{% url 'documentos' %}"><span>Documentos registrados</span><b>{{ n_docs }}</b></a>
+  <a class="cifra" href="{% url 'tramites' %}"><span>Trámites en curso</span><b>{{ n_tramites }}</b>{% if recepciones %}<small class="aviso">{{ recepciones }} por recibir</small>{% endif %}</a>
+  <a class="cifra" href="{% url 'expedientes' %}"><span>Expedientes</span><b>{{ n_exps }}</b></a>
+  <a class="cifra" href="{% url 'documentos' %}"><span>Con copia digital</span><b>{{ n_digitalizados }}</b><small>{{ pct_digital }} % del total</small></a>
+  <a class="cifra" href="{% url 'archivo_fisico' %}"><span>Préstamos vigentes</span><b>{{ n_prestamos }}</b>{% if prestamos_vencidos %}<small class="mal">{{ prestamos_vencidos|length }} vencido(s)</small>{% endif %}</a>
+  <a class="cifra" href="{% url 'documentos' %}"><span>IA por validar</span><b>{{ ia_pendientes }}</b></a>
+</section>
+
+<section class="tarjeta">
+  <h2>Alertas</h2>
+  <ul class="alertas">
+    {% for e in pendientes_transferencia %}<li>Expediente <a href="{{ e.get_absolute_url }}">{{ e.codigo }}</a> listo para transferir a {{ e.transferencia_pendiente }}</li>{% endfor %}
+    {% for p in prestamos_vencidos %}<li class="mal">Préstamo vencido: {{ p.expediente.codigo }} ({{ p.solicitante.username }})</li>{% endfor %}
+    {% if ia_pendientes %}<li>{{ ia_pendientes }} documento(s) con sugerencia de IA sin revisar</li>{% endif %}
+    {% if recepciones %}<li>{{ recepciones }} trámite(s) esperan su recepción</li>{% endif %}
+    {% if not pendientes_transferencia and not prestamos_vencidos and not ia_pendientes and not recepciones %}<li>Sin alertas.</li>{% endif %}
+  </ul>
+</section>
+
+<div class="solo-escritorio graficos">
+  <section class="tarjeta">
+    <h2>Documentos registrados por mes</h2>
+    <div class="barras" role="img" aria-label="Documentos registrados en los últimos 6 meses">
+      {% for m in por_mes %}<div class="barra-col"><span class="barra-n">{{ m.n }}</span><div class="barra" style="height:{{ m.h }}%"></div><span class="barra-l">{{ m.label }}</span></div>{% endfor %}
+    </div>
+  </section>
+  <section class="tarjeta">
+    <h2>Documentos por unidad</h2>
+    {% for r in por_dep %}<div class="hbarra"><span>{{ r.sigla }}</span><span class="pista"><span class="relleno" style="width:{{ r.w }}%"></span></span><b>{{ r.n }}</b></div>{% empty %}<p class="mut">Sin datos.</p>{% endfor %}
+  </section>
+  <section class="tarjeta">
+    <h2>Archivo físico y digital</h2>
+    <div class="doble" role="img" aria-label="{{ pct_digital }} % con copia digital"><span style="width:{{ pct_digital }}%"></span></div>
+    <p class="leyenda"><i class="verde"></i> Con copia digital <b>{{ n_digitalizados }}</b></p>
+    <p class="leyenda"><i class="azul"></i> Solo soporte físico <b>{{ n_solo_fisico }}</b></p>
+    <h3>Documentos por tipo</h3>
+    <table>{% for t in por_tipo %}<tr><td>{{ t.tipo }}</td><td>{{ t.n }}</td></tr>{% empty %}<tr><td>Sin datos</td></tr>{% endfor %}</table>
+  </section>
+  {% if actividad %}<section class="tarjeta">
+    <h2>Actividad reciente</h2>
+    <ul class="alertas">{% for a in actividad %}<li><b>{{ a.accion }}</b> {{ a.objeto }} <span class="mut">· {{ a.usuario }} · {{ a.fecha|date:"d/m H:i" }}</span></li>{% endfor %}</ul>
+  </section>{% endif %}
+</div>
+{% endblock %}

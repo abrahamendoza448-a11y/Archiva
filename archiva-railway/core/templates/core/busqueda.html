@@ -1,0 +1,10 @@
+{% extends "core/base.html" %}{% block content %}
+<h1>Búsqueda documental</h1>
+<form method="get" class="filtros"><input name="q" value="{{ q }}" class="campo" placeholder="Palabras, tema, número de documento…" style="flex:2">
+<select name="tipo" class="campo"><option value="">Todos los tipos</option>{% for k,v in tipos %}<option value="{{ k }}">{{ v }}</option>{% endfor %}</select>
+<label><input type="checkbox" name="asistente" value="1" {% if request.GET.asistente %}checked{% endif %}> Asistente IA</label><button class="btn">Buscar</button></form>
+{% if respuestas %}<section class="tarjeta"><h2>Asistente documental (local)</h2><p><small>Solo consulta documentos que usted está autorizado a ver. Verifique siempre en el original.</small></p>
+{% for r in respuestas %}<p><a href="{{ r.documento.get_absolute_url }}">{{ r.documento.codigo }} — {{ r.documento.titulo }}</a></p><blockquote>{% for f in r.fragmentos %}“{{ f }}” {% endfor %}</blockquote>{% endfor %}</section>{% endif %}
+{% if resultados is not None %}<table><tr><th>Documento</th><th>Tipo</th><th>Dependencia</th><th>Relevancia</th></tr>
+{% for d, s in resultados %}<tr><td><a href="{{ d.get_absolute_url }}">{{ d.codigo }}</a> {{ d.titulo }}</td><td>{{ d.get_tipo_display }}</td><td>{{ d.dependencia.sigla }}</td><td>{{ s }}</td></tr>
+{% empty %}<tr><td colspan="4">Sin resultados.</td></tr>{% endfor %}</table>{% endif %}{% endblock %}

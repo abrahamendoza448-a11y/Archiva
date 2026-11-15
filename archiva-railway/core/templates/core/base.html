@@ -1,0 +1,64 @@
+{% load static %}<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#003366">
+<title>{% block title %}ARCHIVA{% endblock %}</title>
+<link rel="stylesheet" href="{% static 'core/archiva.css' %}"></head>
+<body>
+{% if user.is_authenticated %}
+<input type="checkbox" id="menu-movil" class="oculto-chk" aria-hidden="true" tabindex="-1">
+<input type="checkbox" id="colapsar" class="oculto-chk" aria-hidden="true" tabindex="-1">
+<div class="app">
+  <aside class="lateral" aria-label="Menú principal">
+    <div class="logo"><span class="logo-icono"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h18v4H3z M5 8v11h14V8 M10 12h4"/></svg></span>
+      <span class="txt"><b>ARCHIVA</b><small>Gestión documental inteligente</small></span></div>
+    <nav>
+      {% for i in nav_items %}
+      <a href="{% url i.url %}" class="{% if i.activo %}activo{% endif %}" {% if i.activo %}aria-current="page"{% endif %}>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ i.d }}"/></svg><span class="txt">{{ i.label }}</span></a>
+      {% endfor %}
+    </nav>
+    <label for="colapsar" class="btn-colapsar" role="button" tabindex="0" aria-label="Contraer o expandir menú"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg><span class="txt">Contraer menú</span></label>
+  </aside>
+  <label for="menu-movil" class="cortina" aria-hidden="true"></label>
+
+  <div class="contenido">
+    <header class="superior">
+      <label for="menu-movil" class="hamburguesa" role="button" tabindex="0" aria-label="Abrir menú"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></label>
+      <a class="marca-movil" href="{% url 'dashboard' %}">ARCHIVA</a>
+      <form class="buscador" method="get" action="{% url 'busqueda' %}" role="search">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+        <input type="search" name="q" placeholder="Buscar documentos, expedientes, códigos…" aria-label="Buscar">
+      </form>
+      <div class="perfil">
+        <span class="avatar" aria-hidden="true">{{ iniciales }}</span>
+        <span class="perfil-txt"><b>{{ user.get_full_name|default:user.username }}</b><small>{{ mi_rol }}{% if mi_dependencia %} · {{ mi_dependencia }}{% endif %}</small></span>
+        <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="btn sec chico">Salir</button></form>
+      </div>
+    </header>
+    <main>
+      {% for m in messages %}<div class="msg {{ m.tags }}" role="status">{{ m }}</div>{% endfor %}
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+  <nav class="barra-inferior" aria-label="Accesos rápidos">
+    {% for i in nav_items %}{% if i.barra %}
+    <a href="{% url i.url %}" class="{% if i.activo %}activo{% endif %}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ i.d }}"/></svg>{{ i.corto }}</a>
+    {% endif %}{% endfor %}
+    <label for="menu-movil" role="button" tabindex="0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>Más</label>
+  </nav>
+</div>
+{% else %}
+<main class="solo">{% for m in messages %}<div class="msg {{ m.tags }}" role="status">{{ m }}</div>{% endfor %}{% block content_anonimo %}{% endblock %}</main>
+{% endif %}
+<script>
+/* Móvil: cada celda de tabla muestra el nombre de su columna, y las tablas se ven como tarjetas. */
+document.querySelectorAll("table").forEach(function(t){
+  var h=[].map.call(t.querySelectorAll("thead th, tr:first-child th"),function(x){return x.textContent.trim()});
+  t.querySelectorAll("tr").forEach(function(r){[].forEach.call(r.children,function(c,i){if(c.tagName==="TD"&&h[i])c.setAttribute("data-label",h[i])})});
+});
+/* Teclado: abrir/cerrar menús con Enter o Espacio */
+document.querySelectorAll('label[role=button]').forEach(function(l){l.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();l.click()}})});
+</script>
+</body></html>

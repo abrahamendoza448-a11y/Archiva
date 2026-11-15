@@ -1,0 +1,8 @@
+{% extends "core/base.html" %}{% block content %}
+<h1>{{ t.codigo }} — {{ t.asunto }}</h1>
+<section class="tarjeta"><p>Solicitante: {{ t.solicitante }} · Está en: <b>{{ t.dependencia_actual }}</b> · {{ t.get_estado_display }}</p>
+<h2>Recorrido</h2><ol>{% for d in t.derivaciones.all %}<li>{{ d.fecha|date:"d/m/Y H:i" }} · {{ d.desde.sigla }} → {{ d.hacia.sigla }} · {{ d.instruccion }} · {% if d.recibido %}recibido {{ d.recibido|date:"d/m/Y H:i" }}{% else %}<em>pendiente de recepción</em>{% endif %}</li>{% empty %}<li>Sin derivaciones.</li>{% endfor %}</ol></section>
+{% if puede and t.estado == "EN_CURSO" %}<section class="tarjeta"><h2>Acciones</h2>
+<form method="post" action="{% url 'tramite_derivar' t.pk %}" class="fila">{% csrf_token %}{{ form.hacia }}{{ form.instruccion }}<button class="btn">Derivar</button></form>
+<div class="fila"><form method="post" action="{% url 'tramite_recibir' t.pk %}">{% csrf_token %}<button class="btn sec">Confirmar recepción</button></form>
+<form method="post" action="{% url 'tramite_concluir' t.pk %}">{% csrf_token %}<button class="btn sec">Concluir trámite</button></form></div></section>{% endif %}{% endblock %}

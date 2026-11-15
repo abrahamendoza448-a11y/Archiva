@@ -1,0 +1,5 @@
+{% extends "core/base.html" %}{% block content %}
+<h1>Registro de auditoría</h1>
+<div class="msg {% if cadena_ok %}success{% else %}error{% endif %}">{% if cadena_ok %}✔ Cadena de hashes íntegra: ningún registro fue alterado.{% else %}✖ Cadena rota en el registro #{{ registro_roto }}: posible manipulación.{% endif %}</div>
+<table><tr><th>#</th><th>Fecha</th><th>Usuario</th><th>Acción</th><th>Objeto</th><th>Detalle</th><th>IP</th></tr>
+{% for r in registros %}<tr><td>{{ r.id }}</td><td>{{ r.fecha|date:"d/m/Y H:i:s" }}</td><td>{{ r.usuario }}</td><td>{{ r.accion }}</td><td>{{ r.objeto }}</td><td>{{ r.detalle }}</td><td>{{ r.ip|default:"" }}</td></tr>{% endfor %}</table>{% endblock %}

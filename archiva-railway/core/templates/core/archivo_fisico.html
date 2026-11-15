@@ -1,0 +1,7 @@
+{% extends "core/base.html" %}{% block content %}
+<div class="fila"><h1>Archivo físico</h1>{% if archivista %}<span><a class="btn sec" href="{% url 'ubicacion_nueva' 'estante' %}">+ Estante</a> <a class="btn sec" href="{% url 'ubicacion_nueva' 'caja' %}">+ Caja</a> <a class="btn sec" href="{% url 'ubicacion_nueva' 'carpeta' %}">+ Carpeta</a> <a class="btn" href="{% url 'prestamo_nuevo' %}">Registrar préstamo</a></span>{% endif %}</div>
+{% for est in estantes %}<section class="tarjeta"><h2>Estante {{ est.codigo }} <small>{{ est.ubicacion }}</small></h2>
+{% for c in est.cajas.all %}<h3>Caja {{ c.codigo }}</h3><ul>{% for f in c.carpetas.all %}<li>Carpeta {{ f.codigo }}: {% for e in f.expedientes.all %}<a href="{{ e.get_absolute_url }}">{{ e.codigo }}</a> {% empty %}<em>vacía</em>{% endfor %}</li>{% endfor %}</ul>{% endfor %}</section>
+{% empty %}<p>Aún no hay ubicaciones registradas.</p>{% endfor %}
+<section class="tarjeta"><h2>Préstamos vigentes</h2><ul>{% for p in prestamos %}<li>{{ p.expediente.codigo }} → {{ p.solicitante.username }} (devolver antes del {{ p.fecha_devolucion_prevista }}) {% if p.vencido %}<b class="mal">VENCIDO</b>{% endif %}
+{% if archivista %}<form method="post" action="{% url 'prestamo_devolver' p.pk %}" style="display:inline">{% csrf_token %}<button class="btn sec">Devolver</button></form>{% endif %}</li>{% empty %}<li>Ninguno.</li>{% endfor %}</ul></section>{% endblock %}

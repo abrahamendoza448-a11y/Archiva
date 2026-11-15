@@ -1,0 +1,16 @@
+{% extends "core/base.html" %}{% block content %}
+<div class="fila"><h1>{{ doc.codigo }}</h1>{% if doc.archivo %}<a class="btn" href="{% url 'documento_descargar' doc.pk %}">Descargar</a>{% endif %}</div>
+<section class="tarjeta"><h2>{{ doc.titulo }}</h2>
+<p>Tipo: <b>{{ doc.get_tipo_display }}</b> · Dependencia: <b>{{ doc.dependencia }}</b> · Acceso: {{ doc.get_nivel_acceso_display }} · Versión {{ doc.version }}</p>
+{% if doc.expediente %}<p>Expediente: <a href="{{ doc.expediente.get_absolute_url }}">{{ doc.expediente.codigo }}</a></p>{% endif %}
+{% if doc.archivo %}<p>SHA-256: <code>{{ doc.sha256 }}</code> —
+{% if integro %}<span class="ok">✔ Integridad verificada</span>{% else %}<span class="mal">✖ ARCHIVO ALTERADO O FALTANTE</span>{% endif %}</p>{% endif %}</section>
+{% if doc.tipo_sugerido %}<section class="tarjeta"><h2>Sugerencia de IA (local)</h2>
+<p>Tipo sugerido: <b>{{ doc.tipo_sugerido }}</b> (confianza {{ doc.metadatos.confianza_tipo }}) {% if doc.ia_revisado %}<em>— revisada por una persona</em>{% else %}<em>— pendiente de revisión humana</em>{% endif %}</p>
+<p>{{ doc.resumen }}</p>
+{% if doc.metadatos %}<p><small>Metadatos detectados: {{ doc.metadatos }}</small></p>{% endif %}
+{% if puede_editar and not doc.ia_revisado %}<form method="post" action="{% url 'documento_revisar_ia' doc.pk %}" class="fila">{% csrf_token %}<button name="accion" value="aceptar" class="btn">Aceptar sugerencia</button><button name="accion" value="rechazar" class="btn sec">Rechazar</button></form>{% endif %}</section>{% endif %}
+<section class="tarjeta"><h2>Versiones</h2><ul><li>v{{ doc.version }} (vigente)</li>
+{% for v in doc.versiones.all %}<li>v{{ v.numero }} · {{ v.fecha|date:"d/m/Y H:i" }} · <a href="{% url 'documento_descargar_version' doc.pk v.numero %}">descargar</a></li>{% endfor %}</ul>
+{% if puede_editar %}<form method="post" action="{% url 'documento_version' doc.pk %}" enctype="multipart/form-data" class="fila">{% csrf_token %}{{ form_version.archivo }}<button class="btn sec">Subir nueva versión</button></form>{% endif %}</section>
+{% if doc.texto %}<section class="tarjeta"><h2>Texto extraído</h2><pre>{{ doc.texto|truncatechars:3000 }}</pre></section>{% endif %}{% endblock %}
