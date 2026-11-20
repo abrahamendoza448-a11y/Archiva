@@ -1,0 +1,5 @@
+-r requirements.txt
+psycopg[binary]>=3.1
+gunicorn>=22.0
+whitenoise>=6.6
+# Opcional (OCR real de escaneos): pytesseract y ocrmypdf + paquetes del sistema tesseract-ocr tesseract-ocr-spa

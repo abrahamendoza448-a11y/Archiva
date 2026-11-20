@@ -1,0 +1,4 @@
+{% extends "core/base.html" %}{% block content %}
+<h1>Verificación de integridad</h1>
+<div class="msg {% if problemas %}error{% else %}success{% endif %}">{{ total }} archivo(s) revisados. {% if problemas %}{{ problemas|length }} con problemas.{% else %}Todos íntegros.{% endif %}</div>
+<ul>{% for d in problemas %}<li><a href="{{ d.get_absolute_url }}">{{ d.codigo }}</a> — alterado o faltante</li>{% endfor %}</ul>{% endblock %}

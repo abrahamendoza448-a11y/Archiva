@@ -1,0 +1,27 @@
+{% extends "core/base.html" %}
+{% block title %}Ingresar · ARCHIVA{% endblock %}
+{% block content_anonimo %}
+<div class="login">
+  <section class="login-panel">
+    <div class="logo"><span class="logo-icono"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h18v4H3z M5 8v11h14V8 M10 12h4"/></svg></span><span class="txt"><b>ARCHIVA</b></span></div>
+    <h1>La memoria institucional, organizada e inteligente.</h1>
+    <p class="solo-escritorio">Sistema Integral de Gestión Documental Inteligente: archivo físico, documentación digital, trazabilidad e inteligencia artificial en un solo entorno.</p>
+    <ul class="solo-escritorio">
+      <li><b>Archivo físico y digital conectados</b><br>Cada documento vinculado a su estante, caja y carpeta.</li>
+      <li><b>Seguridad y trazabilidad</b><br>Permisos por unidad, huellas de integridad y auditoría.</li>
+      <li><b>IA con validación humana</b><br>Clasificación y consulta con fuentes citadas.</li>
+    </ul>
+  </section>
+  <section class="login-form">
+    <form method="post" class="tarjeta">{% csrf_token %}
+      <h2>Iniciar sesión</h2><p class="mut">Acceda con su cuenta institucional.</p>
+      {{ form.non_field_errors }}
+      <label>Usuario <input type="text" name="username" autocomplete="username" autofocus required class="campo" id="id_username"></label>
+      <label>Contraseña <input type="password" name="password" autocomplete="current-password" required class="campo" id="id_password"></label>
+      {% if form.errors %}<div class="msg error">Usuario o contraseña incorrectos.</div>{% endif %}
+      <button class="btn bloque">Ingresar</button>
+      <p class="aviso-seg">Conexión cifrada. Cada ingreso queda registrado en la auditoría institucional.</p>
+    </form>
+  </section>
+</div>
+{% endblock %}

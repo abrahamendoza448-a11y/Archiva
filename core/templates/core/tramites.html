@@ -1,0 +1,5 @@
+{% extends "core/base.html" %}{% block content %}
+<div class="fila"><h1>Trámites</h1><a class="btn" href="{% url 'tramite_nuevo' %}">+ Iniciar trámite</a></div>
+<table><tr><th>Código</th><th>Asunto</th><th>Solicitante</th><th>Ubicación actual</th><th>Estado</th></tr>
+{% for t in items %}<tr><td><a href="{% url 'tramite_detalle' t.pk %}">{{ t.codigo }}</a></td><td>{{ t.asunto }}</td><td>{{ t.solicitante }}</td><td>{{ t.dependencia_actual.sigla }}</td><td>{{ t.get_estado_display }}</td></tr>
+{% empty %}<tr><td colspan="5">Sin trámites.</td></tr>{% endfor %}</table>{% endblock %}
