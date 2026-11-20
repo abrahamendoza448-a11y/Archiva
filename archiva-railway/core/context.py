@@ -12,6 +12,7 @@ ICONOS = {
     "buscar": "M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14z M20 20l-4-4",
     "reportes": "M4 20V4 M4 20h16 M8 16v-5 M12 16V8 M16 16v-8",
     "auditoria": "M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6z M9 12l2 2 4-4",
+    "papeles": "M9 3h9a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H9 M9 3v18 M4 7h5 M4 12h5 M4 17h5 M13 9h4 M13 13h4",
 }
 
 # (clave, etiqueta, url_name, prefijo de ruta para marcar activo, roles permitidos o None, visible en barra inferior móvil)
@@ -24,6 +25,7 @@ ITEMS = [
     ("tramites", "Trámites", "tramites", "/tramites/", None, True),
     ("fisico", "Archivo físico", "archivo_fisico", "/archivo-fisico/", None, False),
     ("reportes", "Reportes", "reportes", "/reportes/", None, False),
+    ("papeles", "Papeles de trabajo (UAI)", "uai_inicio", "/uai/", (Rol.ADMIN, Rol.AUDITOR, Rol.ARCHIVISTA), False),
     ("auditoria", "Auditoría y seguridad", "auditoria", "/auditoria/", (Rol.ADMIN, Rol.AUDITOR), False),
 ]
 

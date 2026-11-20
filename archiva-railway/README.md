@@ -31,6 +31,18 @@ distinto; probar con `python manage.py verificar_respaldo <archivo.zip>`.
 - No requiere instalar nada: se abre desde el navegador del celular, con la misma cuenta.
 - Probado en 1440, 820 y 390 px de ancho, sin desplazamiento horizontal.
 
+## Módulo UAI: papeles de trabajo, referencias y marcas (nuevo)
+
+Para la Unidad de Auditoría Interna de un GAM o GAD. Menú: **Papeles de trabajo (UAI)** (`/uai/`).
+- **Marcas estandarizadas** en una tabla-índice ampliable (se retiran, no se borran).
+- **Legajo permanente** (sección propia) y **legajo corriente** por auditoría. Al cargar un documento hay que elegir el tipo.
+- **Numeración**: el código encabeza el título (`LP-A-003`, `LC1-C-001`) y todo se ordena por él.
+- **Referencias y co-referencias con enlace**: un clic en la co-referencia lleva a la referencia de origen.
+- **Marcas sugeridas** por reglas locales; el auditor las confirma o rechaza. No es IA generativa; el punto de conexión para OCR/IA está en `papeles/services.py: sugerir_marcas()`.
+- **Objetivos fijos**; solo cambian mediante **adenda** aprobada por el administrador (jefe de la UAI).
+- Verificador de consistencia, informe preliminar y descarga en **Excel** (libro con hipervínculos entre hojas) y **Word**.
+- Todo queda en la bitácora de auditoría con cadena de hashes. Roles: administrador (aprueba), auditor (elabora), archivista (carga y consulta).
+
 ## Cobertura de requisitos (documento ARCHIVA)
 | RF | Módulo | Estado |
 |----|--------|--------|

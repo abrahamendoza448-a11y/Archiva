@@ -9,7 +9,7 @@ Sistema de gestión documental municipal (Django). Proyecto de una persona que N
 4. Para detener: Ctrl + C.
 
 ## Comandos útiles
-- Pruebas: `python manage.py test core` (deben pasar las 15)
+- Pruebas: `python manage.py test core` (deben pasar las 30; `python manage.py test papeles` solo el módulo UAI)
 - Respaldo: `python manage.py respaldar` · Verificar: `python manage.py verificar_respaldo <zip>`
 - Datos de ejemplo: `python manage.py seed_demo`
 
@@ -18,9 +18,13 @@ Sistema de gestión documental municipal (Django). Proyecto de una persona que N
 - `core/templates/` HTML · `core/static/core/archiva.css` estilos (escritorio completo, móvil ligero ≤ 900 px)
 - `config/settings.py` configuración (SQLite en demo; PostgreSQL con `ARCHIVA_DB_NAME`)
 
+- `papeles/` módulo UAI (marcas, legajos, referencias, adendas). Datos de ejemplo: `python manage.py seed_papeles`
+
 ## Reglas
 - Todo el procesamiento (OCR/IA) es local: no enviar documentos a servicios externos.
 - La búsqueda y la IA siempre pasan por `documentos_visibles()` (permisos). No saltarlo.
 - La auditoría es inmutable: no agregar borrados ni ediciones sobre `Auditoria`.
 - No subir `data/` ni `.env` a ningún repositorio.
 - Antes de cambios grandes, correr las pruebas.
+- Los objetivos y adendas del módulo `papeles` son inmutables; no agregar edición ni borrado, solo nuevas adendas.
+- Las marcas sugeridas nunca se confirman solas: la confirmación es del auditor.

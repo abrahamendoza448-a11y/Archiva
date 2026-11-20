@@ -18,7 +18,7 @@ if _RAILWAY_DOMAIN:
 INSTALLED_APPS = [
     "django.contrib.admin", "django.contrib.auth", "django.contrib.contenttypes",
     "django.contrib.sessions", "django.contrib.messages", "django.contrib.staticfiles",
-    "core",
+    "core", "papeles",
 ]
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

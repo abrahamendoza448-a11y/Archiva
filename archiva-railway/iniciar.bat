@@ -11,6 +11,7 @@ python -m pip install -q -r requirements.txt
 if not exist data mkdir data
 python manage.py migrate -v0
 python manage.py seed_demo
+python manage.py seed_papeles
 set HOST=127.0.0.1
 if /i "%1"=="red" (
   set HOST=0.0.0.0
